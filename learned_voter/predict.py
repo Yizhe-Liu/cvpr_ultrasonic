@@ -26,7 +26,7 @@ def train(path, ckpt_path, idx, grid_len, out_dir):
 
 if __name__ == '__main__':
     parser = ArgumentParser("Learnt Voter")
-    parser.add_argument('--path', '-p', default='data/', help='Dataset path')
+    parser.add_argument('--path', '-p', default='../output', help='Dataset path')
     parser.add_argument('--ckpt_path', '-c', help='Checkpoint path')
     parser.add_argument('--idx', type=int, default=5, help='Scan Index')
     parser.add_argument('--grid_len', type=int, default=256, help='Grid Length')

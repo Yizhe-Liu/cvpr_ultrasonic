@@ -42,7 +42,7 @@ def predict(model_dim, layers, channels, slicing, path, bs, ckpt_path, idx, out_
                 pred):
             occ[i:i+grid_len, j:j+grid_len, k:k+grid_len] = cube
 
-        torch.save(occ, os.path.join(out_dir, f'pred_{idx:03}_{model_dim}d_{label}'))
+        torch.save(occ, os.path.join(out_dir, f'pred_{idx:03}_{model_dim}d_{label}.pt'))
 
 if __name__ == '__main__':
     parser = ArgumentParser("CNN Predictor")
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('--out_dir', '-o', default='output/', help='Output path')
     parser.add_argument('--ckpt', '-c', help='Checkpoint path')
     parser.add_argument('--batch_size', '-bs', type=int, default=40, help='Batch size')
-    parser.add_argument('--idx', type=int, default=6, help='Index of the scans.')
+    parser.add_argument('--idx', type=int, default=5, help='Index of the scans.')
     parser.add_argument('--label', choices=['soft', 'hard'], default='hard', help='Soft label (Logits) or Hard Label (Binary)')
     
     args = parser.parse_args()

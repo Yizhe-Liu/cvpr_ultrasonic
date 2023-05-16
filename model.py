@@ -75,12 +75,12 @@ class UNet3D(nn.Module):
 
         feats = features_start
         for _ in range(num_layers - 1):
-            layers.append(Down3D(feats, feats * 2))
-            feats *= 2
+            layers.append(Down3D(feats, feats*3))
+            feats *= 3
 
         for _ in range(num_layers - 1):
-            layers.append(Up3D(feats, feats // 2, bilinear))
-            feats //= 2
+            layers.append(Up3D(feats, feats//3, bilinear))
+            feats //= 3
 
         layers.append(nn.Conv3d(feats, num_classes, kernel_size=1))
         self.layers = nn.ModuleList(layers)
@@ -134,12 +134,12 @@ class Up3D(nn.Module):
         if bilinear:
             self.upsample = nn.Sequential(
                 nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True),
-                nn.Conv3d(in_ch, in_ch // 2, kernel_size=1),
+                nn.Conv3d(in_ch, in_ch // 3, kernel_size=1),
             )
         else:
-            self.upsample = nn.ConvTranspose3d(in_ch, in_ch // 2, kernel_size=2, stride=2)
+            self.upsample = nn.ConvTranspose3d(in_ch, in_ch // 3, kernel_size=2, stride=2)
 
-        self.conv = DoubleConv3D(in_ch, out_ch)
+        self.conv = DoubleConv3D(in_ch // 3*2, out_ch)
 
     def forward(self, x1: Tensor, x2: Tensor) -> Tensor:
         x1 = self.upsample(x1)
@@ -155,31 +155,67 @@ class Up3D(nn.Module):
         x = torch.cat([x2, x1], dim=1)
         return self.conv(x)
 
+            
+
+class ConnectivityLoss3D(nn.Module):
+    def __init__(self, weight=0.0001):
+        super().__init__()
+        self.supervised_loss = nn.BCEWithLogitsLoss()
+        self.neighbours = torch.cartesian_prod(*[Tensor([-1, 0, 1]).type(torch.int)]*3)
+        self.w = weight
+    
+    def forward(self, x, y, is_gt):
+        loss = Tensor([0]).cuda()
+        for _x, _y, _is_gt in zip(x, y, is_gt):
+            pred = (_x > 0).type(torch.int8) # logits to label
+            acc = sum([torch.roll(pred, s.tolist(), (1,2,3)) for s in self.neighbours])
+            loss += _is_gt*self.supervised_loss(_x, _y) + self.w*(acc==pred).float().mean()
+
+        return loss
+    
+
+
+class ConnectivityLoss2D(nn.Module):
+    def __init__(self, weight=0.001):
+        super().__init__()
+        self.supervised_loss = nn.BCEWithLogitsLoss()
+        self.neighbours = torch.cartesian_prod(*[torch.Tensor([-1, 0, 1]).type(torch.int)]*2)
+        self.w = weight
+    
+    def forward(self, x, y, is_gt):
+        loss = 0
+        for _x, _y, _is_gt in zip(x, y, is_gt):
+            pred = (_x > 0).type(torch.int8) # logits to label
+            acc = sum([torch.roll(pred, s.tolist(), (1,2)) for s in self.neighbours])
+            loss += _is_gt*self.supervised_loss(_x, _y) + self.w*(acc==pred).mean()
+
+        return loss
+    
 
 class UNet3DModel(pl.LightningModule):
     def __init__(self):
         super().__init__()
-        self.unet = UNet3D(1, 1, features_start=16)
-        self.loss = nn.BCEWithLogitsLoss()
+        self.unet = UNet3D(1, 1, 5, features_start=16)
+        self.loss = ConnectivityLoss3D()
     
     def training_step(self, batch, batch_idx):
-        x, y = batch
+        x, y, is_gt = batch
         y_hat = self.unet(x)
-        loss = self.loss(y_hat, y)
+        loss = self.loss(y_hat, y, is_gt)
         self.log("train_loss", loss)
         return loss
     
     def validation_step(self, batch, batch_idx):
-        x, y = batch
+        x, y, is_gt = batch
         y_hat = self.unet(x)
-        loss = self.loss(y_hat, y)
+        loss = self.loss(y_hat, y, is_gt)
         self.log("val_loss", loss)
         return loss
 
     def test_step(self, batch, batch_idx):
-        x, y = batch
+        x, y, is_gt = batch
         y_hat = self.unet(x)
-        loss = self.loss(y_hat, y)
+        loss = self.loss(y_hat, y, is_gt)
         self.log("test_loss", loss)
         return loss
     
