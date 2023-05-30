@@ -12,4 +12,4 @@ for i in tqdm(['001','002','003','004','005']):
     _ = scene.add_triangles(mesh)
     distance = scene.compute_distance(pts).numpy().reshape(768, 768, 1280)
     np.save(f'data/distance_field/gt_{i}.npy', distance)
-    np.save(f'data/occ_field/gt_{i}.npy', distance < 1)
+    np.save(f'data/occ_field/gt_{i}.npy', distance <= (2*0.49479**2+0.3125**2)**0.5/2)

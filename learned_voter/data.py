@@ -18,7 +18,10 @@ class SlicingLogits(Dataset):
         self.oc_fs = []
         for idx in indices:
             p = os.path.join(path, f'gt_{idx}.npy')
-            gt = torch.from_numpy(np.load(p).astype(np.float16)).permute(2, 0, 1)
+            if os.path.exists(p):
+                gt = torch.from_numpy(np.load(p).astype(np.float16)).permute(2, 0, 1)
+            else:
+                gt = torch.zeros(1280, 768, 768)
             logits = []
             for s in ['xy', 'yz', 'zx']:
                 p = os.path.join(path, f'pred_{idx}_{s}_2d_soft_5layers.pt')
