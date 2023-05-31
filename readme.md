@@ -20,13 +20,8 @@ data
 └── volumes
 ```
 
-
 - Run mesh_2_occ.py to convert the meshes for the ground truth scan into occupancy fields: gt_001.npy, ..., gt_005.npy, which is the sames shape as the input scan. This process is very slow. 
 
-```bash
-# cd .. 
-python mesh_2_occ.py -i output/pred_001_voted.pt
-```
 
 ## Training
 ```bash
