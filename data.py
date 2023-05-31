@@ -76,9 +76,6 @@ class UT2DDataModule(pl.LightningDataModule):
         self.train_indices = train_indices
         self.channels = channels
         self.slicing = slicing
-        
-
-    def prepare_data(self):
         self.ds = UT2DDataset(self.path, self.train_indices, self.slicing, self.channels)
 
     def setup(self, stage):

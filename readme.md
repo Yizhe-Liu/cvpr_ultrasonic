@@ -5,7 +5,7 @@
 Please use the Dockerfile in this repo to build a docker image and mount the project folder. 
 ```bash
 sudo docker build . --tag yizhe/ultrasonic_env
-sudo docker run -it --gpus all -v./project --shm-size=2gb yizhe/ultrasonic_env
+sudo docker run -it --gpus all -v.:/project --shm-size=64gb yizhe/ultrasonic_env
 cd /project
 ```
 
