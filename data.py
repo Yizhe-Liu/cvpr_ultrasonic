@@ -76,6 +76,9 @@ class UT2DDataModule(pl.LightningDataModule):
         self.train_indices = train_indices
         self.channels = channels
         self.slicing = slicing
+        
+
+    def prepare_data(self):
         self.ds = UT2DDataset(self.path, self.train_indices, self.slicing, self.channels)
 
     def setup(self, stage):
@@ -83,10 +86,10 @@ class UT2DDataModule(pl.LightningDataModule):
         self.train, self.valid = random_split(self.ds, [int(n*0.9), n-int(n*0.9)])
 
     def train_dataloader(self):
-        return DataLoader(self.train, self.batch_size, shuffle=True, num_workers=20)
+        return DataLoader(self.train, self.batch_size, shuffle=True, num_workers=2)
     
     def val_dataloader(self):
-        return DataLoader(self.valid, self.batch_size, shuffle=False, num_workers=20)
+        return DataLoader(self.valid, self.batch_size, shuffle=False, num_workers=2)
     
 
 class UT3DDataset(Dataset):

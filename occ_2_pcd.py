@@ -4,8 +4,6 @@ import open3d as o3d
 from argparse import ArgumentParser
 
 
-
-
 if __name__ == '__main__':
     parser = ArgumentParser('Convert Occupancy Field to Point Cloud')
     parser.add_argument('--input', '-i', type=str, help='Occupancy filed path') 

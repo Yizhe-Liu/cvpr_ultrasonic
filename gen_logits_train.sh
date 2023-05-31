@@ -1,5 +1,5 @@
 #!bin/bash
-for idx in {1..7}
+for idx in {1..89}
 do
     python predict.py --ckpt trained/xy.ckpt --slicing=xy --idx $idx --label=soft
     python predict.py --ckpt trained/yz.ckpt --slicing=yz --idx $idx --label=soft
