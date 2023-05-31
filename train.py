@@ -24,7 +24,7 @@ def train(model_dim, channels, slicing, path, bs, max_ep, ckpt_path=None, semi_s
     
     #compiled_model = torch.compile(model)
 
-    trainer = pl.Trainer(accelerator='gpu', max_epochs=max_ep, precision=16, log_every_n_steps=1,
+    trainer = pl.Trainer(accelerator='gpu', devices=1, max_epochs=max_ep, precision=16, log_every_n_steps=1,
                          callbacks=[EarlyStopping(monitor="train_loss", mode="min", patience=10),
                                     ModelCheckpoint(dirpath='trained/', filename=slicing)])
 

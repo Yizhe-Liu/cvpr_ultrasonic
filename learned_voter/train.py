@@ -10,7 +10,7 @@ def train(path, bs, max_ep, ckpt_path=None):
     dl = SlicingLogitsDM(path, bs)
     model = Simple3DCNN()
 
-    trainer = pl.Trainer(accelerator='gpu', max_epochs=max_ep, precision=16, log_every_n_steps=1,
+    trainer = pl.Trainer(accelerator='gpu', devices=1, max_epochs=max_ep, precision=16, log_every_n_steps=1,
                          callbacks=[EarlyStopping(monitor="train_loss", mode="min", patience=5),
                                     ModelCheckpoint('../trained/', 'voter')])
     if ckpt_path:

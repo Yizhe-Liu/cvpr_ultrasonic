@@ -13,7 +13,7 @@ def train(path, ckpt_path, idx, grid_len, out_dir):
     ds = SlicingLogits(path, grid_len, idx)
     dl = DataLoader(ds, batch_size=1)
     model = Simple3DCNN()
-    trainer = pl.Trainer(accelerator='gpu', precision=16)
+    trainer = pl.Trainer(accelerator='gpu', devices=1, precision=16)
     pred = trainer.predict(model, dl, ckpt_path=ckpt_path)
     occ = torch.zeros((1280, 768, 768), dtype=bool)
     for (i, j, k), cube in \

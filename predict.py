@@ -20,7 +20,7 @@ def predict(model_dim, layers, channels, slicing, path, bs, ckpt_path, idx, out_
         dl = DataLoader(ds, bs, shuffle=False, num_workers=20)
         model = UNet3DModel()
 
-    trainer = pl.Trainer(accelerator='gpu', precision=16)
+    trainer = pl.Trainer(accelerator='gpu', devices=1, precision=16)
     pred = torch.vstack(trainer.predict(model, dl, ckpt_path=ckpt_path))
 
     if label == 'hard':
