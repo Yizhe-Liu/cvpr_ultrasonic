@@ -1,7 +1,15 @@
 # CVPR 2023 Ultrasonic Data Challenge
 
 ## Dataset
-- Unzip the dataset under data/
+- Unzip the dataset under data/ without the enclosing training folder. There folder strusture should look like: 
+```
+data
+├── distance_field
+├── meshes
+├── occ_field
+├── README.md
+└── volumes
+```
 - Run mesh_2_occ.py to convert the meshes for the ground truth scan into occupancy fields: gt_001.npy, ..., gt_005.npy, which is the sames shape as the input scan. 
 
 ## Training
