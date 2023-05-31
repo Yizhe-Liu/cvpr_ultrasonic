@@ -3,7 +3,7 @@ import pytorch_lightning as pl
 from model import UNet2DModel, UNet3DModel
 from argparse import ArgumentParser
 from data import UT2DDataModule, UT3DDataModule
-from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
+from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 
 
 
@@ -26,7 +26,7 @@ def train(model_dim, channels, slicing, path, bs, max_ep, ckpt_path=None, semi_s
 
     trainer = pl.Trainer(accelerator='gpu', max_epochs=max_ep, precision=16, log_every_n_steps=1,
                          callbacks=[EarlyStopping(monitor="train_loss", mode="min", patience=10),
-                                    ModelCheckpoint(dirpath='trained/', filename=f'{slicing}.ckpt')])
+                                    ModelCheckpoint(dirpath='trained/', filename=slicing)])
 
 
     if ckpt_path:

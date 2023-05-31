@@ -22,6 +22,7 @@ python mesh_2_occ.py
 python train.py --slicing=xy
 python train.py --slicing=yz
 python train.py --slicing=zx
+# You can adjust the batch size
 ```
 After training, you can find your checkpoints under trained/ and then run gen_logits_train.sh. 
 Alternatively, you can also download pretrained weights and unzip it under pretrained/, and then run gen_logits.sh.
