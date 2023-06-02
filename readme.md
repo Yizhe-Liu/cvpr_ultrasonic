@@ -1,5 +1,7 @@
 # CVPR 2023 Ultrasonic Data Challenge
-
+Authors:
+Yizhe Liu Email: y2549liu@uwaterloo.ca
+Nick Torenvliet Email: yihze.liu@uwaterloo.ca
 
 ## Environment
 Please use the Dockerfile in this repo to build a docker image and mount the project folder. 
@@ -53,3 +55,28 @@ For example
 python occ_2_pcd.py -i output/pred_001_voted.pt
 ```
 The output will be in the same folder of the input.  
+
+
+## Evaluation (Appendix)
+Suppose the testing file is 'testing/volume/scan_001.raw'
+You can run the following commands to generates 3 predictions in 3 slicing direction (pred_001_xy_2d_soft_5layers.pt, pred_001_yz_2d_soft_5layers.pt, pred_001_zx_2d_soft_5layers.pt) under the output folder. 
+
+```bash
+python predict.py --ckpt pretrained/xy.ckpt --path testing/ --slicing=xy --idx 1 --label=soft
+python predict.py --ckpt pretrained/yz.ckpt --path testing/ --slicing=yz --idx 1 --label=soft
+python predict.py --ckpt pretrained/zx.ckpt --path testing/ --slicing=zx --idx 1 --label=soft
+```
+
+Then, you can use the learned voter to aggregate them. The output file pred_001_voted.pt will be stored under the output foler.
+```bash
+cd learned_voter
+python predict.py --ckpt ../pretrained/voter.ckpt --idx 1
+```
+
+Finally, you can convert the occupancy file to pointcloud using the following command. 
+You will find the resulting pointcloud at output/pred_001_voted.xyz
+
+```bash
+cd .. # go back to project root
+python occ_2_pcd.py -i output/pred_001_voted.pt
+```
