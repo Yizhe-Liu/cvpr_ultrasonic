@@ -1,7 +1,7 @@
 # CVPR 2023 Ultrasonic Data Challenge
 Authors:
 Yizhe Liu Email: y2549liu@uwaterloo.ca
-Nick Torenvliet Email: yihze.liu@uwaterloo.ca
+Nick Torenvliet Email: ntorenvl@uwaterloo.ca
 
 ## Environment
 Please use the Dockerfile in this repo to build a docker image and mount the project folder. 
